@@ -24,6 +24,10 @@ import { IdiomaListComponent } from './components/idioma/idioma-list/idioma-list
 import { IdiomaFormComponent } from './components/idioma/idioma-form/idioma-form.component';
 import { idiomaResolver } from './components/idioma/resolver/idioma-resolver';
 
+import { EnderecoListComponent } from './components/endereco/endereco-list/endereco-list.component';
+import { EnderecoFormComponent } from './components/endereco/endereco-form/endereco-form.component';
+import { enderecoResolver } from './components/endereco/resolver/endereco-resolver';
+
 export const routes: Routes = [
 
     {path: 'estados',component: EstadoListComponent, title: 'Lista de Estados'},
@@ -33,6 +37,10 @@ export const routes: Routes = [
     {path: 'municipios',component: MunicipioListComponent, title: 'Lista de Municipios'},
     {path: 'municipios/new',component: MunicipioFormComponent, title: 'Novo Municipio'},
     {path: 'municipios/edit/:id',component: MunicipioFormComponent, resolve: {municipio: municipioResolver}},
+
+    {path: 'enderecos',component: EnderecoListComponent, title: 'Lista de Endereços'},
+    {path: 'enderecos/new',component: EnderecoFormComponent, title: 'Novo Endereço'},
+    {path: 'enderecos/edit/:idEndereco',component: EnderecoFormComponent, resolve: {endereco: enderecoResolver}},    
 
     {path: 'editoras',component: EditoraListComponent, title: 'Lista de Editoras'},
     {path: 'editoras/new',component: EditoraFormComponent, title: 'Nova Editora'},
