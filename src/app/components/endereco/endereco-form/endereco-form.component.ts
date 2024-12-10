@@ -83,33 +83,49 @@ export class EnderecoFormComponent implements OnInit {
   }
 
   salvar(): void {
+    const page = 0; // Página inicial
+    const size = 10; // Número de itens por página
+
     this.formGroup.markAllAsTouched();
     if (this.formGroup.valid) {
         const endereco = this.formGroup.value;
 
-        // Criar payload com o formato esperado pelo backend
-        const payload = {
-            idEndereco: endereco.idEndereco || null, // ID do município (se existir)
-            cep: endereco.cep, // Nome do município
-            logradouro: endereco.logradouro,
-            complemento: endereco.complemento,
-            bairro: endereco.bairro,
-            idMunicipio: endereco.municipio.idMunicipio // Apenas o ID do estado
-        };
+        // Determina se é criação ou atualização com base na presença de idEndereco
+        const operacao = endereco.idEndereco == null
+            ? this.enderecoService.create({
+                  cep: endereco.cep,
+                  logradouro: endereco.logradouro,
+                  complemento: endereco.complemento,
+                  bairro: endereco.bairro,
+                  idMunicipio: endereco.municipio.idMunicipio, // Apenas ID para criação
+              }) // Método create
+            : this.enderecoService.update({
+                  idEndereco: endereco.idEndereco,
+                  cep: endereco.cep,
+                  logradouro: endereco.logradouro,
+                  complemento: endereco.complemento,
+                  bairro: endereco.bairro,
+                  municipio: {
+                    idMunicipio: endereco.municipio.idMunicipio,
+                    nome: endereco.municipio.nome, // Nome do município
+                    estado: endereco.municipio.estado, // Estado do município
+                }, // Objeto para update
+              }); // Método update
 
-        console.log('Payload enviado para o backend:', payload);
-
-        this.enderecoService.create(payload).subscribe({
-            next: (response) => {
-                console.log('Resposta do backend:', response);
+        // Executa a operação (create ou update)
+        operacao.subscribe({
+            next: () => {
+                this.enderecoService.findAll(page, size); // Atualiza a listagem
                 this.router.navigate(['/enderecos'], { queryParams: { success: true } });
             },
-            error: (error) => {
-                console.error('Erro ao salvar:', error);
-            },
+            error: (error: HttpErrorResponse) => {
+                console.log('Erro ao salvar: ', error);
+                this.tratarErros(error);
+            }
         });
     }
   }
+
 
   tratarErros(error: HttpErrorResponse): void {
     if (error.status === 400 && error.error?.errors) {

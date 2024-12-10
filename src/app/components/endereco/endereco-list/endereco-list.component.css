@@ -17,23 +17,23 @@
 }
 
 .mat-column-cep {
-    width: 60%;
+    width: 10%;
 }
   
 .mat-column-logradouro {
-    width: 40%;
+    width: 30%;
 }
   
 .mat-column-complemento {
-    width: 40%;
+    width: 20%;
 }
   
 .mat-column-bairro {
-    width: 40%;
+    width: 20%;
 }
 
 .mat-column-municipio {
-    width: 40%;
+    width: 20%;
 }
 
 .mat-column-acao {
