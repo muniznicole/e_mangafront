@@ -28,6 +28,10 @@ import { EnderecoListComponent } from './components/endereco/endereco-list/ender
 import { EnderecoFormComponent } from './components/endereco/endereco-form/endereco-form.component';
 import { enderecoResolver } from './components/endereco/resolver/endereco-resolver';
 
+import { TelefoneListComponent } from './components/telefone/telefone-list/telefone-list.component';
+import { TelefoneFormComponent } from './components/telefone/telefone-form/telefone-form.component';
+import { telefoneResolver } from './components/telefone/resolver/telefone-resolver';
+
 export const routes: Routes = [
 
     {path: 'estados',component: EstadoListComponent, title: 'Lista de Estados'},
@@ -40,7 +44,11 @@ export const routes: Routes = [
 
     {path: 'enderecos',component: EnderecoListComponent, title: 'Lista de Endereços'},
     {path: 'enderecos/new',component: EnderecoFormComponent, title: 'Novo Endereço'},
-    {path: 'enderecos/edit/:idEndereco',component: EnderecoFormComponent, resolve: {endereco: enderecoResolver}},    
+    {path: 'enderecos/edit/:idEndereco',component: EnderecoFormComponent, resolve: {endereco: enderecoResolver}},
+
+    {path: 'telefones',component: TelefoneListComponent, title: 'Lista de Telefones'},
+    {path: 'telefones/new',component: TelefoneFormComponent, title: 'Novo Telefone'},
+    {path: 'telefones/edit/:idTelefone', component: TelefoneFormComponent, title:'Editar Telefone', resolve: {telefone: telefoneResolver}},    
 
     {path: 'editoras',component: EditoraListComponent, title: 'Lista de Editoras'},
     {path: 'editoras/new',component: EditoraFormComponent, title: 'Nova Editora'},
