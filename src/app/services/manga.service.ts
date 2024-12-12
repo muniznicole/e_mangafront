@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Manga } from '../models/manga.model';
 import { ClassificacaoIndicativa } from '../models/classificacao-indicativa.model';
 
@@ -37,7 +37,9 @@ export class MangaService {
 
   // Método para buscar um mangá por ID
   findById(idManga: number): Observable<Manga> {
-    return this.httpClient.get<Manga>(`${this.baseUrl}/${idManga}`);
+    return this.httpClient.get<Manga>(`${this.baseUrl}/${idManga}`).pipe(
+      tap(data => console.log('Dados retornados:', data))
+    ); 
   }
 
   // Método para criar um novo mangá

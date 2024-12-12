@@ -28,7 +28,6 @@ import { ClassificacaoIndicativa } from '../../../models/classificacao-indicativ
   standalone: true,
   imports: [
     NgIf, 
-    NgFor, 
     ReactiveFormsModule, 
     MatFormFieldModule,
     MatInputModule, 
@@ -65,7 +64,7 @@ export class MangaFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private location: Location
   ) {
-    const manga: Manga = activatedRoute.snapshot.data['estado'];
+    const manga: Manga = activatedRoute.snapshot.data['manga'];
     const editora: Editora = activatedRoute.snapshot.data['editora'];
     const genero: Genero = activatedRoute.snapshot.data['genero'];
     const formato: Formato = activatedRoute.snapshot.data['formato'];
@@ -73,16 +72,18 @@ export class MangaFormComponent implements OnInit {
     const classificacaoIndicativa: ClassificacaoIndicativa = activatedRoute.snapshot.data['classificacaoIndicativa'];
 
     this.formGroup = this.formBuilder.group({
-      idManga: [(manga && manga.idManga) ? manga.idManga : null],
-      nome: [(manga && manga.nome) ? manga.nome : null, [Validators.required]],
-      valor: [(manga && manga.valor) ? manga.valor : null, [Validators.required]],
-      editora: [(manga && manga.editora) ? manga.editora.idEditora : null, [Validators.required]],
-      genero: [(manga && manga.genero) ? manga.genero : null, [Validators.required]],
-      formato: [(manga && manga.formato) ? manga.formato.idFormato : null, [Validators.required]],
-      idioma: [(manga && manga.idioma) ? manga.idioma.idIdioma : null, [Validators.required]],
-      classificacaoIndicativa: [(manga && manga.classificacaoIndicativa) ? manga.classificacaoIndicativa.id : null, [Validators.required]],
-      estoque: [(manga && manga.estoque) ? manga.estoque : null, [Validators.required]],
-    });
+      idManga: [manga?.idManga || null],
+      nome: [manga?.nome || null, [Validators.required]],
+      valor: [manga?.valor || null, [Validators.required]],
+      editora: [manga?.editora?.idEditora || null, [Validators.required]], 
+      genero: [Array.isArray(manga?.genero) 
+        ? manga.genero.map((g: Genero) => g.idMangaGenero) 
+        : [manga?.genero?.idMangaGenero],[Validators.required]],
+      formato: [manga?.formato?.idFormato || null, [Validators.required]],
+      idioma: [manga?.idioma?.idIdioma || null, [Validators.required]],
+      classificacaoIndicativa: [manga?.classificacaoIndicativa?.id || null, [Validators.required]],
+      estoque: [manga?.estoque || null, [Validators.required]]
+  });
   }
 
   ngOnInit(): void {
@@ -183,8 +184,6 @@ export class MangaFormComponent implements OnInit {
         });
     }
   }
-
-
 
   voltarPagina() {
     this.location.back();
