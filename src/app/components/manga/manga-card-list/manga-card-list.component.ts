@@ -14,11 +14,11 @@ type Card = {
   valor: number,
   classificacaoIndicativa: string,
   editora: string,
-  mangaGenero: string,
+  genero: string,
   formato: string,
   idioma: string,
   estoque: number,
-  imageUrl: string,
+  //imageUrl: string,
 }
 
 @Component({
@@ -61,10 +61,10 @@ export class MangaCardListComponent implements OnInit {
         classificacaoIndicativa: manga.classificacaoIndicativa.label,
         editora: manga.editora.nome,
         formato: manga.formato.formato,
-        mangaGenero: manga.mangaGenero.genero,
+        genero: manga.genero.genero,
         idioma: manga.idioma.idioma,
         estoque: manga.estoque,
-        imageUrl: this.mangaService.getUrlImage(manga.nomeImagem)
+        //imageUrl: this.mangaService.getUrlImage(manga.nomeImagem)
       })
     });
     this.cards.set(cards);

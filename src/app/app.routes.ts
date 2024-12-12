@@ -32,7 +32,15 @@ import { TelefoneListComponent } from './components/telefone/telefone-list/telef
 import { TelefoneFormComponent } from './components/telefone/telefone-form/telefone-form.component';
 import { telefoneResolver } from './components/telefone/resolver/telefone-resolver';
 
+import { MangaCardListComponent } from './components/manga/manga-card-list/manga-card-list.component';
+import { MangaListComponent } from './components/manga/manga-list/manga-list.component';
+import { MangaFormComponent } from './components/manga/manga-form/manga-form.component';
+import { mangaResolver } from './components/manga/resolver/manga-resolver';
+
 export const routes: Routes = [
+
+    {path: '', pathMatch: 'full', redirectTo: 'ecommerce'},
+    {path: 'ecommerce', component: MangaCardListComponent, title: 'Lista de Cards de Mangás'},
 
     {path: 'estados',component: EstadoListComponent, title: 'Lista de Estados'},
     {path: 'estados/new',component: EstadoFormComponent, title: 'Novo Estado'},
@@ -64,6 +72,10 @@ export const routes: Routes = [
 
     {path: 'idiomas',component: IdiomaListComponent, title: 'Lista de Idiomas de Mangá'},
     {path: 'idiomas/new',component: IdiomaFormComponent, title: 'Novo Idiomas de Mangá'},
-    {path: 'idiomas/edit/:idIdioma', component: IdiomaFormComponent, title:'Editar Idioma de Mangá', resolve: {idioma: idiomaResolver}}
+    {path: 'idiomas/edit/:idIdioma', component: IdiomaFormComponent, title:'Editar Idioma de Mangá', resolve: {idioma: idiomaResolver}},
+
+    {path: 'mangas',component: MangaListComponent, title: 'Lista de Mangás'},
+    {path: 'mangas/new',component: MangaFormComponent, title: 'Novo Mangá'},
+    {path: 'mangas/edit/:idManga', component: MangaFormComponent, title:'Editar Mangá', resolve: {manga: mangaResolver}}
 
 ];

@@ -33,9 +33,12 @@
                             <span>{{formGroup.get('valor')?.getError('apiError')}}</span> 
                         }
                     </mat-error>
+                    <mat-error *ngIf="formGroup.get('valor')?.hasError('required')">
+                        Preço é obrigatório.
+                    </mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" class="full-width-input">
                     <mat-label>Editora</mat-label>
                     <mat-select formControlName="editora">
                         @for (editora of editoras; track editora.idEditora) {
@@ -44,9 +47,26 @@
                         </mat-option>
                         }
                     </mat-select>
+                    <mat-error *ngIf="formGroup.get('editora')?.hasError('required')">
+                        Editora é obrigatória.
+                    </mat-error>
+                </mat-form-field>
+                
+                <mat-form-field appearance="fill" class="full-width-input">
+                    <mat-label>Gêneros</mat-label>
+                    <mat-select formControlName="genero" multiple>
+                        @for (genero of generos; track genero.idMangaGenero) {
+                        <mat-option [value]="genero">
+                            {{genero.genero}}
+                        </mat-option>
+                        }
+                    </mat-select>
+                    <mat-error *ngIf="formGroup.get('genero')?.hasError('required')">
+                        Gênero é obrigatório.
+                    </mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" class="full-width-input">
                     <mat-label>Formato do Mangá</mat-label>
                     <mat-select formControlName="formato">
                         @for (formato of formatos; track formato.idFormato) {
@@ -55,31 +75,12 @@
                         </mat-option>
                         }
                     </mat-select>
+                    <mat-error *ngIf="formGroup.get('formato')?.hasError('required')">
+                        Formato é obrigatório.
+                      </mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
-                    <mat-label>Gênero</mat-label>
-                    <mat-select formControlName="genero">
-                        @for (genero of generos; track genero.idMangaGenero) {
-                        <mat-option [value]="genero">
-                            {{genero.genero}}
-                        </mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-
-                <mat-form-field appearance="fill">
-                    <mat-label>Gênero</mat-label>
-                    <mat-select formControlName="genero">
-                        @for (genero of generos; track genero.idMangaGenero) {
-                        <mat-option [value]="genero">
-                            {{genero.genero}}
-                        </mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" class="full-width-input">
                     <mat-label>Idioma</mat-label>
                     <mat-select formControlName="idioma">
                         @for (idioma of idiomas; track idioma.idIdioma) {
@@ -88,19 +89,24 @@
                         </mat-option>
                         }
                     </mat-select>
+                    <mat-error *ngIf="formGroup.get('idioma')?.hasError('required')">
+                        Idioma é obrigatório.
+                    </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill" class="full-width-input">
                     <mat-label>Classificação Indicativa</mat-label>
-                    <mat-select formControlName="classificacaoIndicativa" #selectModalidade >
-                        <mat-option *ngFor="let classificacaoIndicativa of classificacaoindicativas" [value]="classificacaoIndicativa">
-                            {{ classificacaoIndicativa.label }}
+                    <mat-select formControlName="classificacaoIndicativa">
+                        @for (classificacaoIndicativa of classificacaoIndicativas; track classificacaoIndicativa.id) {
+                        <mat-option [value]="classificacaoIndicativa">
+                            {{classificacaoIndicativa.label}}
                         </mat-option>
+                        }
                     </mat-select>
-                    <mat-error *ngIf="formGroup.get('classificacaoIndicativa')?.hasError('apiError')">
-                        {{ formGroup.get('classificacaoIndicativa')?.getError('apiError') }}
+                    <mat-error *ngIf="formGroup.get('classificacaoIndicativa')?.hasError('required')">
+                        Classificação é obrigatória.
                     </mat-error>
-                </mat-form-field> 
+                </mat-form-field>
 
                 <mat-form-field appearance="fill" class="full-width-input">
                     <mat-label>Estoque</mat-label>
@@ -115,9 +121,12 @@
                             <span>{{formGroup.get('estoque')?.getError('apiError')}}</span> 
                         }
                     </mat-error>
+                    <mat-error *ngIf="formGroup.get('estoque')?.hasError('required')">
+                        Estoque é obrigatório.
+                    </mat-error>
                 </mat-form-field> 
                 
-                <mat-form-field appearance="outline" class="full-width-input">
+            <!--<mat-form-field appearance="outline" class="full-width-input">
                     <mat-label>Imagem do Mangá</mat-label>
                     <input type="file" (change)="carregarImagemSelecionada($event)" hidden #fileInput>
                     <input matInput [value]="fileName" readonly>
@@ -125,18 +134,24 @@
                     <button mat-icon-button matSuffix (click)="fileInput.click()">
                         <mat-icon>folder_open</mat-icon>
                     </button>   
-                </mat-form-field>
+                </mat-form-field>-->
                 
-                <div *ngIf="imagePreview" class="container responsive-grid">
+                <!--<div *ngIf="imagePreview" class="container responsive-grid">
                     <mat-card>
                 
                         <img mat-card-image [src]="imagePreview" >
                        
-                        <mat-card-title class="centered-text"> {{inputNome.value}} </mat-card-title>
+                        <mat-card-title class="centered-text"> 
+                            {{inputNome.value}} 
+                        </mat-card-title>
                         
-                        <mat-card-content class="centered-text"> {{selectClassificacaoIndicativa.value.label}} </mat-card-content>
+                        <mat-card-content class="centered-text"> 
+                            {{formGroup.get('ClassificacaoIndicativa')?.value?.label}} 
+                        </mat-card-content>
                         <br/>
-                        <mat-card-content class="centered-text"> {{inputValor.value}} </mat-card-content>
+                        <mat-card-content class="centered-text"> 
+                            {{formGroup.get('valor')?.value}} 
+                        </mat-card-content>
                 
                         <mat-card-actions class="centered-text">
                             <button mat-button color="primary">Ver mais ...</button>
@@ -147,7 +162,7 @@
                                 style="width: 100%; padding: 16px;">Adicionar ao carrinho</button>
                         </mat-card-footer>
                     </mat-card>
-                </div>
+                </div>-->
                 
             </form>
         </mat-card-content>

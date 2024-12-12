@@ -5,12 +5,12 @@ import { Idioma } from "./idioma.model";
 import { ClassificacaoIndicativa } from "./classificacao-indicativa.model";
 
 export class Manga {
-    nomeImagem!: string;
+    //nomeImagem!: string;
     idManga!: number;
     nome!: string;
     valor!: number;
     editora!: Editora;
-    mangaGenero!: Genero;
+    genero!: Genero;
     formato!: Formato;
     idioma!: Idioma;
     classificacaoIndicativa!: ClassificacaoIndicativa;
