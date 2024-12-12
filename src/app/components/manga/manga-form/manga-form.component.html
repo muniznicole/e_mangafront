@@ -82,7 +82,7 @@
                 <mat-form-field appearance="fill">
                     <mat-label>Idioma</mat-label>
                     <mat-select formControlName="idioma">
-                        @for (idioma of idioma; track idioma.idIdioma) {
+                        @for (idioma of idiomas; track idioma.idIdioma) {
                         <mat-option [value]="idioma">
                             {{idioma.sigla}}
                         </mat-option>
@@ -93,7 +93,7 @@
                 <mat-form-field appearance="fill" class="full-width-input">
                     <mat-label>Classificação Indicativa</mat-label>
                     <mat-select formControlName="classificacaoIndicativa" #selectModalidade >
-                        <mat-option *ngFor="let classificacaoIndicativa of classificacaoIndicativas" [value]="classificacaoIndicativa">
+                        <mat-option *ngFor="let classificacaoIndicativa of classificacaoindicativas" [value]="classificacaoIndicativa">
                             {{ classificacaoIndicativa.label }}
                         </mat-option>
                     </mat-select>

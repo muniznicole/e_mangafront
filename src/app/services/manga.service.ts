@@ -55,7 +55,7 @@ export class MangaService {
     return this.httpClient.get<Manga>(`${this.baseUrl}/${idManga}`); 
   }
 
-  insert(manga: Manga): Observable<Manga> {
+  create(manga: Manga): Observable<Manga> {
 
     const data = {
         nome: manga.nome,

@@ -9,101 +9,201 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { HttpErrorResponse } from '@angular/common/http';
-
-import { Faixa } from '../../../models/faixa.model';
-import { FaixaService } from '../../../services/faixa.service';
-import { Modalidade } from '../../../models/modalidade.model';
 import { MatIconModule } from '@angular/material/icon';
 
+import { Manga } from '../../../models/manga.model';
+import { MangaService } from '../../../services/manga.service';
+import { Editora } from '../../../models/editora.model';
+import { EditoraService } from '../../../services/editora.service';
+import { Genero } from '../../../models/genero.model';
+import { GeneroService } from '../../../services/genero.service';
+import { Formato } from '../../../models/formato.model';
+import { FormatoService } from '../../../services/formato.service';
+import { Idioma } from '../../../models/idioma.model';
+import { IdiomaService } from '../../../services/idioma.service';
+import { ClassificacaoIndicativa } from '../../../models/classificacao-indicativa.model';
 
 @Component({
-  selector: 'app-faixa-form',
+  selector: 'app-manga-form',
   standalone: true,
-  imports: [NgIf, NgFor, ReactiveFormsModule, MatFormFieldModule,
-    MatInputModule, MatButtonModule, MatCardModule, MatToolbarModule,
-    RouterModule, MatSelectModule, MatIconModule],
-  templateUrl: './faixa-form.component.html',
-  styleUrl: './faixa-form.component.css'
+  imports: [
+    NgIf, 
+    NgFor, 
+    ReactiveFormsModule, 
+    MatFormFieldModule,
+    MatInputModule, 
+    MatButtonModule, 
+    MatCardModule, 
+    MatToolbarModule,
+    RouterModule, 
+    MatSelectModule, 
+    MatIconModule
+  ],
+  templateUrl: './manga-form.component.html',
+  styleUrls: ['./manga-form.component.css']
 })
-export class FaixaFormComponent implements OnInit {
+export class MangaFormComponent implements OnInit {
+  
   formGroup: FormGroup;
-  modalidades: Modalidade[] = [];
 
+  editoras: Editora [] = [];
+  generos: Genero [] = [];
+  formatos: Formato [] = [];
+  idiomas: Idioma [] = [];
+  classificacaoindicativas: ClassificacaoIndicativa[] = [];
   fileName: string = '';
   selectedFile: File | null = null; 
   imagePreview: string | ArrayBuffer | null = null;
 
-  constructor(private formBuilder: FormBuilder,
-    private faixaService: FaixaService,
+  constructor( private formBuilder: FormBuilder,
+
+    private mangaService: MangaService,
+    private editoraService: EditoraService,
+    private generoService: GeneroService,
+    private formatoService: FormatoService,
+    private IdiomaService: IdiomaService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private location: Location) {
+    private location: Location
+  ) {
+    const manga: Manga = activatedRoute.snapshot.data['estado'];
+    const editora: Editora = activatedRoute.snapshot.data['editora'];
+    const genero: Genero = activatedRoute.snapshot.data['genero'];
+    const formato: Formato = activatedRoute.snapshot.data['formato'];
+    const idioma: Idioma = activatedRoute.snapshot.data['idioma'];
 
     this.formGroup = this.formBuilder.group({
-      id: [null],
-      nome: ['', Validators.required],
-      descricao: ['', Validators.required],
-      preco: ['', Validators.required],
-      estoque: ['', Validators.required],
-      modalidade:[null]
+      idManga: [(manga && manga.idManga) ? manga.idManga : null],
+      nome: [(manga && manga.nome) ? manga.nome : null],
+      valor: [(manga && manga.valor) ? manga.valor : null],
+      editora: [editora],
+      genero: [genero],
+      formato: [formato],
+      idioma: [idioma],
+      estoque: [(manga && manga.estoque) ? manga.estoque : null],
+      classificacaoindicativa: [this.classificacaoindicativas]
     })
+
   }
 
   ngOnInit(): void {
-
-    this.faixaService.findModalidades().subscribe(data => {
-      this.modalidades = data;
-      this.initializeForm();
+    this.getEditoraForSelect(),
+    this.getGeneroForSelect(),
+    this.getFormatoForSelect(),
+    this.getIdiomaForSelect(),
+    this.mangaService.findClassificacaoIndicativa().subscribe(data => {
+      this.classificacaoindicativas = data;
     });
   }
+
+  getEditoraForSelect(): void{
+    this.editoraService.findAll(0, 100).subscribe({
+      next: (data) => {
+        console.log('Editoras carregadas:', data); // Verifica os estados carregados.
+        this.editoras = data;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Erro ao carregar editoras:', error);
+      }
+    });
+  }
+
+  getGeneroForSelect(): void{
+    this.generoService.findAll(0, 100).subscribe({
+      next: (data) => {
+        console.log('Genero carregados:', data); // Verifica os estados carregados.
+        this.generos = data;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Erro ao carregar generos:', error);
+      }
+    });
+  }
+
+  getFormatoForSelect(): void{
+    this.formatoService.findAll(0, 100).subscribe({
+      next: (data) => {
+        console.log('Formatos carregados:', data); // Verifica os estados carregados.
+        this.formatos = data;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Erro ao carregar formatos:', error);
+      }
+    });
+  }
+
+  getIdiomaForSelect(): void{
+    this.IdiomaService.findAll(0, 100).subscribe({
+      next: (data) => {
+        console.log('Idiomas carregados:', data); // Verifica os estados carregados.
+        this.idiomas = data;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Erro ao carregar idiomas:', error);
+      }
+    });
+  }
+
+  salvar(): void {
+
+    const page = 0;
+    const size = 50;
+
+    this.formGroup.markAllAsTouched();
+    if (this.formGroup.valid) {
+        const manga = this.formGroup.value;
+        // Criar payload com o formato esperado pelo backend
+        const operacao = manga.idManga == null
+        ? this.mangaService.create({
+            nome: manga.nome, // Nome do município
+            valor: manga.valor,
+            idEditora: manga.editora.idEditora,
+            idFormato: manga.formato.idFormato,
+            idMangaGenero: manga.genero.idMangaGenero,
+            idIdioma: manga.idioma.idIdioma,
+            id: manga.classificacaoindicativa.id, // Apenas o ID do estado
+            estoque: manga.estoque
+          })
+        : this.mangaService.update({
+            nome: manga.nome, // Nome do município
+            valor: manga.valor,
+            idEditora: manga.editora.idEditora,
+            idFormato: manga.formato.idFormato,
+            idMangaGenero: manga.genero.idMangaGenero,
+            idIdioma: manga.idioma.idIdioma,
+            id: manga.classificacaoindicativa.id, // Apenas o ID do estado
+            estoque: manga.estoque
+        });
+        operacao.subscribe({
+          next: () => {
+            this.mangaService.findAll(page, size); // Atualiza a listagem
+            this.router.navigate(['/mangas'], { queryParams: { success: true } });
+        },
+        error: (error: HttpErrorResponse) => {
+            console.log('Erro ao salvar: ', error);
+            this.tratarErros(error);
+        }
+        });
+    }
+  }  
 
   voltarPagina() {
     this.location.back();
   }
 
-  initializeForm(): void {
-    const faixa: Faixa = this.activatedRoute.snapshot.data['faixa'];
-
-    // encontrando a referencia da modalidade no vetor
-    const modalidade = this.modalidades.find(m => m.id === (faixa?.modalidade?.id || null));
-
-    // carregando a imagem do preview
-    if (faixa && faixa.nomeImagem) {
-      this.imagePreview = this.faixaService.getUrlImage(faixa.nomeImagem);
-      this.fileName = faixa.nomeImagem;
+  tratarErros(error: HttpErrorResponse): void {
+    if (error.status === 400 && error.error?.errors) {
+      error.error.errors.forEach((validationError: any) => {
+        const formControl = this.formGroup.get(validationError.fieldName);
+        if (formControl) {
+          formControl.setErrors({ apiError: validationError.message });
+        }
+      });
+    } else if (error.status < 400) {
+      alert(error.error?.message || 'Erro genérico no envio do formulário.');
+    } else if (error.status >= 500) {
+      alert('Erro interno do servidor. Por favor, tente novamente mais tarde.');
     }
-
-
-    this.formGroup = this.formBuilder.group({
-      id: [(faixa && faixa.id) ? faixa.id : null],
-      nome: [(faixa && faixa.nome) ? faixa.nome : null],
-      descricao: [(faixa && faixa.descricao) ? faixa.descricao : null],
-      preco: [(faixa && faixa.preco) ? faixa.preco : null],
-      estoque: [(faixa && faixa.estoque) ? faixa.estoque : null],
-      modalidade: [modalidade]
-    })
-
-  }
-
-  tratarErros(errorResponse: HttpErrorResponse) {
-
-    if (errorResponse.status === 400) {
-      if (errorResponse.error?.errors) {
-        errorResponse.error.errors.forEach((validationError: any) => {
-          const formControl = this.formGroup.get(validationError.fieldName);
-
-          if (formControl) {
-            formControl.setErrors({apiError: validationError.message})
-          }
-
-        });
-      }
-    } else if (errorResponse.status < 400){
-      alert(errorResponse.error?.message || 'Erro genérico do envio do formulário.');
-    } else if (errorResponse.status >= 500) {
-      alert('Erro interno do servidor.');
-    }
-
   }
 
   carregarImagemSelecionada(event: any) {
@@ -119,9 +219,9 @@ export class FaixaFormComponent implements OnInit {
 
   }
 
-  private uploadImage(faixaId: number) {
+  private uploadImage(mangaId: number) {
     if (this.selectedFile) {
-      this.faixaService.uploadImage(faixaId, this.selectedFile.name, this.selectedFile)
+      this.mangaService.uploadImage(mangaId, this.selectedFile.name, this.selectedFile)
       .subscribe({
         next: () => {
           this.voltarPagina();
@@ -136,36 +236,13 @@ export class FaixaFormComponent implements OnInit {
     }
   }
 
-  salvar() {
-    this.formGroup.markAllAsTouched();
-    if (this.formGroup.valid) {
-      const faixa = this.formGroup.value;
-
-      // selecionando a operacao (insert ou update)
-      const operacao = faixa.id == null
-      ? this.faixaService.insert(faixa)
-      : this.faixaService.update(faixa);
-
-      // executando a operacao
-      operacao.subscribe({
-        next: (faixaCadastrada) => {
-          this.uploadImage(faixaCadastrada.id);
-        },
-        error: (error) => {
-          console.log('Erro ao Salvar' + JSON.stringify(error));
-          this.tratarErros(error);
-        }
-      });
-    }
-  }
-
   excluir() {
     if (this.formGroup.valid) {
-      const faixa = this.formGroup.value;
-      if (faixa.id != null) {
-        this.faixaService.delete(faixa).subscribe({
+      const manga = this.formGroup.value;
+      if (manga.id != null) {
+        this.mangaService.delete(manga).subscribe({
           next: () => {
-            this.router.navigateByUrl('/admin/faixas');
+            this.router.navigateByUrl('/mangas');
           },
           error: (err) => {
             console.log('Erro ao Excluir' + JSON.stringify(err));
@@ -173,6 +250,43 @@ export class FaixaFormComponent implements OnInit {
         });
       }
     }
+  }
+
+  errorMessages: { [controlName: string]: { [errorName: string]: string } } = {
+    nome: {
+      required: 'O nome deve ser informado.',
+      minlength: 'O nome deve conter ao menos 2 letras.',
+      maxlength: 'O nome deve conter no máximo 10 letras.',
+      apiError: ' '
+    },
+    valor: {
+      required: 'O preço deve ser informado.',
+      apiError: ' '
+    },
+    editora: {
+      required: 'A descricao deve ser informada.',
+      apiError: ' '
+    },
+    genero: {
+      required: 'A descricao deve ser informada.',
+      apiError: ' '
+    },
+    formato: {
+      required: 'A descricao deve ser informada.',
+      apiError: ' '
+    },
+    idioma: {
+      required: 'A descricao deve ser informada.',
+      apiError: ' '
+    },
+    estoque: {
+      required: 'O estoque deve ser informado.',
+      apiError: ' '
+    }
+    classificacaoindicativa: {
+      required: 'A descricao deve ser informada.',
+      apiError: ' '
+    },
   }
 
   getErrorMessage(controlName: string, errors: ValidationErrors | null | undefined): string {
@@ -186,30 +300,6 @@ export class FaixaFormComponent implements OnInit {
     }
 
     return 'invalid field';
-  }
-
-  errorMessages: { [controlName: string]: { [errorName: string]: string } } = {
-    nome: {
-      required: 'O nome deve ser informado.',
-      minlength: 'O nome deve conter ao menos 2 letras.',
-      maxlength: 'O nome deve conter no máximo 10 letras.',
-      apiError: ' '
-    },
-
-    descricao: {
-      required: 'A descricao deve ser informada.',
-      minlength: 'O nome deve conter 2 letras.',
-      maxlength: 'O nome deve conter 2 letras.',
-      apiError: ' '
-    },
-    preco: {
-      required: 'O preço deve ser informado.',
-      apiError: ' '
-    },
-    estoque: {
-      required: 'O estoque deve ser informado.',
-      apiError: ' '
-    }
   }
 
 }
