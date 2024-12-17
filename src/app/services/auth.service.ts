@@ -94,7 +94,7 @@ export class AuthService {
   }
   
   setUsuarioLogado(usuario: Usuario): void {
-    this.localStorageService.setItem(this.usuarioLogadoKey, usuario);
+    this.localStorageService.setItem(this.usuarioLogadoKey, { ...usuario, perfil: usuario.perfil });
   }
 
   setToken(token: string): void {
@@ -135,7 +135,7 @@ export class AuthService {
   // Novo método: Verifica se o usuário logado é admin
   isAdmin(): boolean {
     const usuario = this.usuarioLogadoSubject.value;
-    return usuario?.perfil?.[0]?.id == 1;
+    return usuario?.perfil === 'ADMIN';
   }
 
   // Novo método: Obtém o ID do usuário logado

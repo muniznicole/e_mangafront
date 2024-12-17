@@ -1,109 +1,121 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UsuarioService } from '../../../services/usuario.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
 
-import { Usuario } from '../../../models/usuario.model';
-import { AuthService } from '../../../services/auth.service';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+
+import { UsuarioService } from '../../../services/usuario.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-usuario-form',
+  templateUrl: './usuario-form.component.html',
   standalone: true,
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
+    CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatToolbarModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
     MatTableModule,
-    MatPaginatorModule
+    MatButtonModule,
+    MatInputModule,
+    MatIconModule,
+    MatSelectModule
   ],
-  templateUrl: './usuario-form.component.html',
   styleUrls: ['./usuario-form.component.css']
 })
 export class UsuarioFormComponent implements OnInit {
-  formGroup!: FormGroup;
-  idUsuario?: number;
+  usuarioForm!: FormGroup;
   isAdmin: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.initForm();
-    this.idUsuario = this.route.snapshot.params['id'];
-    this.isAdmin = this.authService.isAdmin();
-
-    if (this.idUsuario) {
-      this.usuarioService.findById(this.idUsuario).subscribe((usuario) => {
-        this.populateForm(usuario);
-      });
-    }
+    this.verificarPerfilAdmin();
+    this.inicializarFormulario();
   }
 
-  initForm(): void {
-    this.formGroup = this.fb.group({
+  verificarPerfilAdmin(): void {
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado') || '{}');
+    this.isAdmin = usuarioLogado.perfil === 'ADMIN';
+  }
+
+  inicializarFormulario(): void {
+    this.usuarioForm = this.fb.group({
       nome: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
-      senha: ['', Validators.required]
+      senha: ['', [Validators.required, Validators.minLength(6)]],
+      perfil: [{ value: 'USER', disabled: !this.isAdmin }, Validators.required],
+      telefone: this.fb.array([this.criarTelefone()]),
+      endereco: this.fb.array([this.criarEndereco()])
     });
   }
 
-  populateForm(usuario: Usuario): void {
-    this.formGroup.patchValue({
-      nome: usuario.nome,
-      email: usuario.email,
-      username: usuario.username,
-      senha: '' // Senha não preenchida ao editar
+  criarTelefone(): FormGroup {
+    return this.fb.group({
+      codigoDeArea: ['', Validators.required],
+      numero: ['', Validators.required]
     });
   }
 
-  salvar(): void {
-    if (this.formGroup.valid) {
-      const usuario = this.formGroup.value;
-
-      if (!this.isAdmin) {
-        usuario.perfis = [{ id: 2, label: 'USER' }]; // Perfil USER
-      }
-
-      if (this.idUsuario) {
-        usuario.id = this.idUsuario;
-        this.usuarioService.update(usuario).subscribe(() => {
-          this.router.navigate(['/usuario']);
-        });
-      } else {
-        this.usuarioService.create(usuario).subscribe(() => {
-          this.router.navigate(['/usuario']);
-        });
-      }
-    }
+  criarEndereco(): FormGroup {
+    return this.fb.group({
+      cep: ['', Validators.required],
+      logradouro: ['', Validators.required],
+      complemento: [''],
+      bairro: ['', Validators.required],
+      municipio: this.fb.group({
+        nome: ['', Validators.required],
+        estado: this.fb.group({
+          nome: ['', Validators.required],
+          sigla: ['', Validators.required]
+        })
+      })
+    });
   }
 
-  excluir(): void {
-    if (this.idUsuario) {
-      this.usuarioService.delete(this.idUsuario).subscribe(() => {
-        this.router.navigate(['/usuario']);
+  get telefones(): FormArray {
+    return this.usuarioForm.get('telefone') as FormArray;
+  }
+
+  get enderecos(): FormArray {
+    return this.usuarioForm.get('endereco') as FormArray;
+  }
+
+  adicionarTelefone(): void {
+    this.telefones.push(this.criarTelefone());
+  }
+
+  adicionarEndereco(): void {
+    this.enderecos.push(this.criarEndereco());
+  }
+
+  onSubmit(): void {
+    if (this.usuarioForm.valid) {
+      const usuario = this.usuarioForm.getRawValue();
+      usuario.perfil = this.isAdmin ? usuario.perfil : 'USER';
+
+      this.usuarioService.create(usuario).subscribe({
+        next: () => {
+          alert('Usuário salvo com sucesso!');
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          console.error('Erro ao salvar usuário:', err);
+          alert('Falha ao cadastrar usuário.');
+        }
       });
     }
   }

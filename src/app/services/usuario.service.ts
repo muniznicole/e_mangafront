@@ -13,26 +13,9 @@ export class UsuarioService {
 
   constructor(private httpClient: HttpClient) { }
 
-  // Método para buscar classificações indicativas
+  // Método para buscar perfil
   findPerfil(): Observable<Perfil[]> {
     return this.httpClient.get<Perfil[]>(`${this.baseUrl}/perfil`);
-  }
-
-  // Método para buscar todos os mangás com paginação
-  findAll(page?: number, size?: number): Observable<Usuario[]> {
-    let params = {};
-    if (page !== undefined && size !== undefined) {
-      params = {
-        page: page.toString(),
-        size: size.toString()
-      };
-    }
-    return this.httpClient.get<Usuario[]>(this.baseUrl, { params });
-  }
-
-  // Método para contar a quantidade total de mangás
-  count(): Observable<number> {
-    return this.httpClient.get<number>(`${this.baseUrl}/count`);
   }
 
   // Método para buscar um mangá por ID
@@ -42,19 +25,23 @@ export class UsuarioService {
     ); 
   }
 
-  // Método para criar um novo mangá
+  // Método para criar um novo usuario
   create(data: any): Observable<Usuario> {
     return this.httpClient.post<Usuario>(`${this.baseUrl}/insert`, data);
   }
 
-  // Método para atualizar um mangá existente
+  // Método para atualizar um usuario existente
   update(data: any): Observable<Usuario> {
     return this.httpClient.put<Usuario>(`${this.baseUrl}/update/${data.id}`, data);
   }
 
-  // Método para excluir um mangá por ID
+  // Método para excluir um usuario por ID
   delete(id: number): Observable<any> {
     return this.httpClient.delete<any>(`${this.baseUrl}/delete/${id}`);
+  }
+
+  buscarUsuarioLogado(): Observable<Usuario> {
+    return this.httpClient.get<Usuario>(`${this.baseUrl}/me`);
   }
 
 }

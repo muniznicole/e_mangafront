@@ -66,10 +66,10 @@ export class LoginComponent implements OnInit {
             return;
           }
           // Redirecionamento baseado no perfil
-          const perfil = usuarioLogado.perfil[0]?.id;
-          if (perfil === 1) {
+          const perfil = usuarioLogado.perfil;
+          if (perfil === 'ADMIN') {
             this.router.navigateByUrl('/admin');
-          } else if (perfil === 2) {
+          } else if (perfil === 'USER') {
             this.router.navigateByUrl('/user');
           } else {
           this.showSnackbarTopPosition('Perfil inválido. Entre em contato com o suporte.');
