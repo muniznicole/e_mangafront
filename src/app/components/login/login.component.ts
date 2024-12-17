@@ -24,7 +24,7 @@ import { Perfil } from '../../models/perfil.model';
 export class LoginComponent implements OnInit {
 
   loginForm!: FormGroup;
-  perfil: string = ' ';
+  perfil: string = 'USER';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -48,15 +48,31 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     if (this.loginForm.valid) {
+      
       const username = this.loginForm.get('username')?.value;
-      const password = this.loginForm.get('senha')?.value;
+      const senha = this.loginForm.get('senha')?.value;
 
-      const loginMethod = this.perfil === 'ADMIN' ? 'loginADM' : 'loginUSER';
+      const login = this.perfil === 'ADMIN' ? 'loginADM' : 'loginUSER';
 
-      this.authService[loginMethod](username, password).subscribe({
+      this.authService[login](username, senha).subscribe({
         next: () => {
-          const redirectRoute = this.perfil === 'ADMIN' ? '/admin' : '/user';
-          this.router.navigateByUrl(redirectRoute);
+
+          // Buscar o usuário logado do AuthService
+          const usuarioLogado = this.authService['usuarioLogadoSubject'].value;
+
+          if (!usuarioLogado) {
+            this.showSnackbarTopPosition('Erro ao buscar dados do usuário.');
+            return;
+          }
+          // Redirecionamento baseado no perfil
+          const perfil = usuarioLogado.perfil[0]?.id;
+          if (perfil === 1) {
+            this.router.navigateByUrl('/admin');
+          } else if (perfil === 2) {
+            this.router.navigateByUrl('/user');
+          } else {
+          this.showSnackbarTopPosition('Perfil inválido. Entre em contato com o suporte.');
+          }
         },
         error: () => {
           this.showSnackbarTopPosition("Username ou senha inválido");
@@ -68,7 +84,7 @@ export class LoginComponent implements OnInit {
   }
   
   onRegister() {
-    this.router.navigate(['/user/usuario/new']);
+    this.router.navigate(['/usuario/new']);
   }
 
   showSnackbarTopPosition(content: string) {

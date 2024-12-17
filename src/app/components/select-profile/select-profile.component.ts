@@ -13,9 +13,9 @@ export class SelectProfileComponent {
 
   selectProfile(profile: string): void {
     if (profile === 'ADMIN') {
-      this.router.navigate(['/admin/login'], { queryParams: { perfil: 'ADMIN' } });
+      this.router.navigate(['/login'], { queryParams: { perfil: 'ADMIN' } });
     } else if (profile === 'USER') {
-      this.router.navigate(['/user/login'], { queryParams: { perfil: 'USER' } });
+      this.router.navigate(['/login'], { queryParams: { perfil: 'USER' } });
     }
   }
 }

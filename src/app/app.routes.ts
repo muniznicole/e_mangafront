@@ -8,6 +8,9 @@ import { UserTemplateComponent } from './components/template/user-template/user-
 import { SelectProfileComponent } from './components/select-profile/select-profile.component';
 import { LoginComponent } from './components/login/login.component';
 
+import { AdminGuard } from './guards/admin.guard';
+import { UserGuard } from './guards/user.guard';
+
 import { UsuarioListComponent } from './components/usuario/usuario-list/usuario-list.component';
 import { UsuarioFormComponent } from './components/usuario/usuario-form/usuario-form.component';
 import { usuarioResolver } from './components/usuario/resolver/usuario-resolver';
@@ -62,22 +65,22 @@ export const routes: Routes = [
             {path: 'ecommerce', component: MangaCardListComponent, title: 'Lista de Cards de Mangás' },
 
             {path: 'select-profile', component: SelectProfileComponent, title: 'Selecione o Perfil' },
+            {path: 'login', component: LoginComponent, title: 'Login'},
+            {path: 'usuario/new',component: UsuarioFormComponent, title: 'Novo Usuário'},
+
             {path: 'carrinho', component: CarrinhoComponent, title: 'Carrinho'},
         ],
     }, 
     {
         path: 'user',
         component: UserTemplateComponent,
+        canActivate: [UserGuard],
         title: 'Perfil de Usuário',
         children: [
 
             {path: '', pathMatch: 'full', redirectTo: 'usuário'},
-            {path: 'login', component: LoginComponent, title: 'Login'},
-
-            {path: 'ecommerce', component: MangaCardListComponent, title: 'Lista de Cards de Mangás' },
 
             {path: 'usuario',component: UsuarioListComponent, title: 'Lista de Usuários'},
-            {path: 'usuario/new',component: UsuarioFormComponent, title: 'Novo Usuário'},
             {path: 'usuario/edit/:id', component: UsuarioFormComponent, title:'Editar Usuário', resolve: {usuario: usuarioResolver}},
         
         ],
@@ -85,13 +88,14 @@ export const routes: Routes = [
     {
         path: 'admin',
         component: AdminTemplateComponent,
+        canActivate: [AdminGuard],
         title: 'Perfil de Administrativo',
         children: [
 
             {path: '', pathMatch: 'full', redirectTo: 'estados'},
-            {path: 'login', component: LoginComponent, title: 'Login'},
 
-            {path: 'ecommerce', component: MangaCardListComponent, title: 'Lista de Cards de Mangás' },
+            {path: 'usuario',component: UsuarioListComponent, title: 'Lista de Usuários'},
+            {path: 'usuario/edit/:id', component: UsuarioFormComponent, title:'Editar Usuário', resolve: {usuario: usuarioResolver}},
 
             {path: 'estados',component: EstadoListComponent, title: 'Lista de Estados'},
             {path: 'estados/new',component: EstadoFormComponent, title: 'Novo Estado'},
