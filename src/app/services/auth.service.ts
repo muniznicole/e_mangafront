@@ -23,10 +23,22 @@ export class AuthService {
   ) { this.initUsuarioLogado(); }
 
   private initUsuarioLogado():void {
-    const usuario = this.localStorageService.getItem(this.usuarioLogadoKey);
-    if (usuario) {
-      // const usuarioLogado = JSON.parse(usuario);
+    const usuarioString = this.localStorageService.getItem(this.usuarioLogadoKey);
+    console.log("Usuário recuperado do localStorage:", usuarioString);
+    
+    let usuario = null;
+    try {
+      usuario = usuarioString ? JSON.parse(usuarioString) : null; // Parse do JSON
+      console.log("Usuário parseado do localStorage:", usuario);
+    } catch (error) {
+      console.error("Erro ao parsear usuário do localStorage:", error);
+    } 
+    
+    if (usuario && usuario.perfil) {
       this.usuarioLogadoSubject.next(usuario);
+    } else {
+      console.warn("Nenhum usuário válido encontrado no localStorage.");
+      this.usuarioLogadoSubject.next(null);
     }
   }
 
@@ -123,7 +135,7 @@ export class AuthService {
   // Novo método: Verifica se o usuário logado é admin
   isAdmin(): boolean {
     const usuario = this.usuarioLogadoSubject.value;
-    return usuario ? usuario.perfil.some((perfil) => perfil.id === 1) : false;
+    return usuario?.perfil?.[0]?.id == 1;
   }
 
   // Novo método: Obtém o ID do usuário logado

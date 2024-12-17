@@ -59,6 +59,7 @@ export class LoginComponent implements OnInit {
 
           // Buscar o usuário logado do AuthService
           const usuarioLogado = this.authService['usuarioLogadoSubject'].value;
+          console.log("Usuário logado no login.component:", usuarioLogado);
 
           if (!usuarioLogado) {
             this.showSnackbarTopPosition('Erro ao buscar dados do usuário.');
