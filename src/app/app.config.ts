@@ -8,10 +8,10 @@ import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes), 
-    provideHttpClient(),
+    provideRouter(routes),
+    provideHttpClient(), 
     provideAnimationsAsync(),
     JwtHelperService,
-    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }, 
+    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
   ]
 };

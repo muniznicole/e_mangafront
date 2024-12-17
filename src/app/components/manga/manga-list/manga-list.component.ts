@@ -5,9 +5,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Params, RouterModule } from '@angular/router';
+import { CurrencyPipe } from '@angular/common';
+
 import { PageEvent } from '@angular/material/paginator';
 import { MatPaginatorModule } from '@angular/material/paginator';
-
 import { Manga } from '../../../models/manga.model';
 import { MangaService } from '../../../services/manga.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -15,7 +16,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-manga-list',
   standalone: true,
-  imports: [MatPaginatorModule, NgFor, MatToolbarModule, MatIconModule, MatButtonModule, MatTableModule, RouterModule],
+  imports: [MatPaginatorModule, NgFor, MatToolbarModule, MatIconModule, MatButtonModule, MatTableModule, RouterModule, CurrencyPipe],
   templateUrl: './manga-list.component.html',
   styleUrls: ['./manga-list.component.css']
 })
@@ -49,6 +50,9 @@ export class MangaListComponent implements OnInit {
       }
     });
     this.loadMangas(this.page, this.size);
+    this.mangaService.count().subscribe(
+      data => { this.totalRecords = data }
+    );
   }
 
   loadMangas(page:number, size:number): void {
@@ -73,8 +77,6 @@ export class MangaListComponent implements OnInit {
   paginar(event: PageEvent): void {
     this.page = event.pageIndex;
     this.size = event.pageSize;
-    this.mangaService.findAll(this.page, this.size).subscribe(
-      data => { this.mangas = data; }
-    );
+    this.ngOnInit();
   }  
 }

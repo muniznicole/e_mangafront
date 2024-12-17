@@ -1,0 +1,19 @@
+.footer {
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .footer__toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F7F1E3;
+  }
+  
+  .footer__text {
+    color: #333;
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+  }

@@ -1,0 +1,30 @@
+<mat-toolbar color="primary">
+  <!-- Botão de menu -->
+  <button *ngIf="exibirSidebar" mat-icon-button (click)="clickMenu()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- Título do sistema -->
+  <span class="header-title">e-manga</span>
+
+  <span class="faixa-spacer"></span>
+
+  <!-- Botão do Carrinho -->
+  <button mat-icon-button routerLink="/carrinho" aria-label="Ir para o carrinho">
+    <mat-icon>shopping_cart</mat-icon>
+  </button>
+
+  <!-- Botão para o perfil do usuário -->
+  <button *ngIf="usuarioLogado" mat-icon-button routerLink="/user" aria-label="Ir para o perfil do usuário">
+    <mat-icon>person</mat-icon>
+  </button>
+  
+  <!-- Nome do usuário logado -->
+  <span class="username">{{ usuarioLogado?.username }}</span>  
+
+  <!-- Botão de logout -->
+  <button mat-icon-button (click)="onLogout()">
+    <mat-icon>exit_to_app</mat-icon>
+  </button>
+
+</mat-toolbar>

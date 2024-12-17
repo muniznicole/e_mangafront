@@ -1,0 +1,61 @@
+mat-toolbar {
+  background-color: #F7F1E3;
+  color: #333;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  padding: 0 20px;
+}
+
+.header-title {
+  font-family: 'Arial', sans-serif;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+  margin-left: 10px;
+}
+
+.faixa-spacer {
+  flex: 1; /* Garante que os elementos fiquem distribuídos corretamente */
+}
+
+.username {
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 10px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Botões do header (carrinho e logout) */
+button[mat-icon-button] {
+  margin-right: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ícones dos botões */
+button[mat-icon-button] mat-icon {
+  font-size: 24px;
+  color: #333;
+}
+
+/* Efeito ao passar o mouse */
+button[mat-icon-button]:hover mat-icon {
+  color: #ff5722; /* Cor de destaque ao passar o mouse */
+}
+
+@media (max-width: 600px) {
+  .header-title {
+    font-size: 1.2rem;
+  }
+
+  .username {
+    font-size: 0.9rem;
+  }
+
+  mat-toolbar {
+    padding: 0 10px;
+  }
+}

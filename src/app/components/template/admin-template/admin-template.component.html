@@ -1,0 +1,14 @@
+<header class="admin-template__header">
+  <app-header></app-header>
+</header>
+<div class="admin-template__layout">
+  <aside class="admin-template__sidebar" *ngIf="exibirSidebar">
+    <app-sidebar></app-sidebar>
+  </aside>
+  <main class="admin-template__content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+<footer class="admin-template__footer">
+  <app-footer></app-footer>
+</footer>

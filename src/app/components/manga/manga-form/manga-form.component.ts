@@ -43,12 +43,14 @@ import { ClassificacaoIndicativa } from '../../../models/classificacao-indicativ
 })
 export class MangaFormComponent implements OnInit {
   
+  idMangar: number = 0;
   formGroup: FormGroup;
   editoras: Editora [] = [];
   generos: Genero [] = [];
   formatos: Formato [] = [];
   idiomas: Idioma [] = [];
   classificacaoIndicativas: ClassificacaoIndicativa[] = [];
+  
   fileName: string = '';
   selectedFile: File | null = null; 
   imagePreview: string | ArrayBuffer | null = null;
@@ -70,6 +72,7 @@ export class MangaFormComponent implements OnInit {
     const formato: Formato = activatedRoute.snapshot.data['formato'];
     const idioma: Idioma = activatedRoute.snapshot.data['idioma'];
     const classificacaoIndicativa: ClassificacaoIndicativa = activatedRoute.snapshot.data['classificacaoIndicativa'];
+    
 
     this.formGroup = this.formBuilder.group({
       idManga: [manga?.idManga || null],
@@ -85,6 +88,8 @@ export class MangaFormComponent implements OnInit {
       estoque: [manga?.estoque || null, [Validators.required]]
   });
   }
+
+  
 
   ngOnInit(): void {
     this.getEditoraForSelect(),
@@ -174,8 +179,9 @@ export class MangaFormComponent implements OnInit {
 
         operacao.subscribe({
             next: () => {
+                this.uploadImage(data.id);
                 this.mangaService.findAll(page, size); // Atualiza a listagem
-                this.router.navigate(['/mangas'], { queryParams: { success: true } });
+                this.router.navigate(['/admin/ecommerce'], { queryParams: { success: true } });
             },
             error: (error: HttpErrorResponse) => {
                 console.error('Erro ao salvar:', error);
@@ -184,7 +190,7 @@ export class MangaFormComponent implements OnInit {
         });
     }
   }
-
+  
   voltarPagina() {
     this.location.back();
   }
@@ -217,22 +223,22 @@ export class MangaFormComponent implements OnInit {
 
   }
 
-  //private uploadImage(mangaId: number) {
-    //if (this.selectedFile) {
-      //this.mangaService.uploadImage(mangaId, this.selectedFile.name, this.selectedFile)
-      //.subscribe({
-        //next: () => {
-          //this.voltarPagina();
-        //},
-        //error: err => {
-          //console.log('Erro ao fazer o upload da imagem');
-          // tratar o erro
-        //}
-      //})
-    //} else {
-      //this.voltarPagina();
-    //}
-  //}
+  private uploadImage(idManga: number) {
+    if (this.selectedFile) {
+      this.mangaService.uploadImage(idManga, this.selectedFile.name, this.selectedFile)
+      .subscribe({
+        next: () => {
+          this.voltarPagina();
+        },
+        error: err => {
+          console.log('Erro ao fazer o upload da imagem');
+           //tratar o erro
+        }
+      })
+    } else {
+      this.voltarPagina();
+    }
+  }
 
   excluir() {
     if (this.formGroup.valid) {
